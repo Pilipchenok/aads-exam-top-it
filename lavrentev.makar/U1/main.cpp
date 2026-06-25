@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "functions.hpp"
 
 int main(int argc, char* argv[])
@@ -33,5 +34,27 @@ int main(int argc, char* argv[])
     lavrentev::readData(std::cin, notes, ids, size, cap);
   }
 
-  
+  std::ostringstream buf;
+  lavrentev::print(buf, notes, size);
+
+  if (!out.empty())
+  {
+    std::ofstream fout(out);
+    if (!fout.is_open())
+    {
+      delete[] notes;
+      delete[] ids;
+      std::cerr << "File open error\n";
+      return 2;
+    }
+    fout << buf.str();
+  }
+  else
+  {
+    std::cout << buf.str();
+  }
+
+  delete[] notes;
+  delete[] ids;
+  return 0;
 }

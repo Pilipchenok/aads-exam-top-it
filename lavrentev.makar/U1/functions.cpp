@@ -25,6 +25,10 @@ void lavrentev::readData(std::istream& in, lavrentev::Person notes[], size_t ids
       notes[curSize].info = info;
       ids[curSize] = id;
       curSize++;
+      if (curSize == maxSize)
+      {
+        lavrentev::expand(&notes, &ids, maxSize);
+      }
     }
   }
 }
@@ -93,4 +97,31 @@ bool lavrentev::parseArgs(int argc, char* argv[], std::string inFile, std::strin
     }
   }
   return true;
+}
+
+void lavrentev::print(std::ostream& out, Person notes[], size_t currentSize)
+{
+  for (size_t i = 0; i < currentSize; ++i)
+  {
+    out << notes[i].id << ' ' << notes[i].info << '\n';
+  }
+}
+
+void lavrentev::expand(Person** notes, size_t** ids, size_t& maxSize)
+{
+  maxSize *= 2;
+  Person* newNotes = new Person[maxSize];
+  size_t* newIds = new size_t[maxSize];
+
+  for (size_t i = 0; i < maxSize / 2; ++i)
+  {
+    newNotes[i] = (*notes)[i];
+    newIds[i] = (*ids)[i];
+  }
+
+  delete[] *notes;
+  delete[] *ids;
+
+  *notes = newNotes;
+  *ids = newIds;
 }
