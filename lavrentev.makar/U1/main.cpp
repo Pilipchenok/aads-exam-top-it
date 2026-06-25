@@ -27,15 +27,15 @@ int main(int argc, char* argv[])
       std::cerr << "File open error\n";
       return 2;
     }
-    lavrentev::readData(fileIn, notes, ids, size, cap);
+    lavrentev::readData(fileIn, &notes, &ids, size, cap);
   }
   else
   {
-    lavrentev::readData(std::cin, notes, ids, size, cap);
+    lavrentev::readData(std::cin, &notes, &ids, size, cap);
   }
 
   std::ostringstream buf;
-  lavrentev::print(buf, notes, size);
+  lavrentev::print(buf, &notes, size);
 
   if (!out.empty())
   {

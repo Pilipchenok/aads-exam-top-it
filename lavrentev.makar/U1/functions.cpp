@@ -13,27 +13,83 @@ bool lavrentev::exists(size_t id, size_t ids[], size_t size)
   return false;
 }
 
-void lavrentev::readData(std::istream& in, lavrentev::Person notes[], size_t ids[], size_t& curSize, size_t maxSize)
+bool lavrentev::parseLine(const std::string& line, size_t& id, std::string& info)
 {
-  size_t id;
-  std::string info;
-  while (curSize < maxSize && in >> id >> info)
+  size_t i = 0;
+  size_t n = line.size();
+
+  while (i < n && (line[i] == ' ' || line[i] == '\t'))
   {
-    if (!lavrentev::exists(id, ids, curSize))
+    ++i;
+  }
+
+  if (i >= n || line[i] < '0' || line[i] > '9')
+  {
+    return false;
+  }
+
+  id = 0;
+  while (i < n && line[i] >= '0' && line[i] <= '9')
+  {
+    id = id * 10 + static_cast<size_t>(line[i] - '0');
+    ++i;
+  }
+
+  if (i < n && line[i] != ' ' && line[i] != '\t')
+  {
+    return false;
+  }
+
+  while (i < n && (line[i] == ' ' || line[i] == '\t'))
+  {
+    ++i;
+  }
+
+  if (i >= n)
+  {
+    return false;
+  }
+
+  info = line.substr(i);
+  return true;
+}
+
+void lavrentev::readData(
+  std::istream& in,
+  Person** notes,
+  size_t** ids,
+  size_t& curSize,
+  size_t maxSize)
+{
+  std::string line;
+  while (std::getline(in, line))
+  {
+    size_t id = 0;
+    std::string info;
+
+    if (!lavrentev::parseLine(line, id, info))
     {
-      notes[curSize].id = id;
-      notes[curSize].info = info;
-      ids[curSize] = id;
-      curSize++;
-      if (curSize == maxSize)
-      {
-        lavrentev::expand(&notes, &ids, maxSize);
-      }
+      continue;
     }
+
+    if (lavrentev::exists(id, *ids, curSize))
+    {
+      continue;
+    }
+
+    if (curSize == maxSize)
+    {
+      lavrentev::expand(notes, ids, maxSize);
+    }
+
+    (*notes)[curSize].id = id;
+    (*notes)[curSize].info = info;
+    (*ids)[curSize] = id;
+    ++curSize;
   }
 }
 
-void lavrentev::readfile(std::string name, lavrentev::Person notes[], size_t ids[], size_t maxSize)
+void lavrentev::readfile(std::string name, lavrentev::Person** notes, size_t** ids, size_t maxSize)
 {
   size_t currentSize = 0;
 
@@ -52,7 +108,7 @@ void lavrentev::readfile(std::string name, lavrentev::Person notes[], size_t ids
   }
 }
 
-bool lavrentev::parseArgs(int argc, char* argv[], std::string inFile, std::string outFile)
+bool lavrentev::parseArgs(int argc, char* argv[], std::string& inFile, std::string& outFile)
 {
   if (argc > 3)
   {
@@ -99,11 +155,11 @@ bool lavrentev::parseArgs(int argc, char* argv[], std::string inFile, std::strin
   return true;
 }
 
-void lavrentev::print(std::ostream& out, Person notes[], size_t currentSize)
+void lavrentev::print(std::ostream& out, Person** notes, size_t currentSize)
 {
   for (size_t i = 0; i < currentSize; ++i)
   {
-    out << notes[i].id << ' ' << notes[i].info << '\n';
+    out << (*notes)[i].id << ' ' << (*notes)[i].info << '\n';
   }
 }
 
