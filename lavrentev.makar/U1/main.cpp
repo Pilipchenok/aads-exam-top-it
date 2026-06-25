@@ -5,6 +5,11 @@
 
 int main(int argc, char* argv[])
 {
+  if (argc > 3)
+  {
+    std::cerr << "Too many arguments\n";
+    return 0;
+  }
   std::string in, out;
   if (!lavrentev::parseArgs(argc, argv, in, out))
   {
@@ -49,13 +54,27 @@ int main(int argc, char* argv[])
       std::cerr << "File open error\n";
       return 2;
     }
-    fout << buf.str();
+    if (size == 0)
+    {
+      fout << '\n';
+    }
+    else
+    {
+      fout << buf.str();
+    }
     fout.flush();
     fout.close();
   }
   else
   {
-    std::cout << buf.str();
+    if (size == 0)
+    {
+      std::cout << '\n';
+    }
+    else
+    {
+      std::cout << buf.str();
+    }
     std::cout.flush();
   }
 
