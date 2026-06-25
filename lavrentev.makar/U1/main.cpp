@@ -50,10 +50,13 @@ int main(int argc, char* argv[])
       return 2;
     }
     fout << buf.str();
+    fout.flush();
+    fout.close();
   }
   else
   {
     std::cout << buf.str();
+    std::cout.flush();
   }
 
   std::cerr << size << ' ' << skip << '\n';

@@ -66,6 +66,20 @@ void lavrentev::readData(
   std::string line;
   while (std::getline(in, line))
   {
+    bool onlySpaces = true;
+    for (size_t k = 0; k < line.size(); ++k)
+    {
+      if (line[k] != ' ' && line[k] != '\t')
+      {
+        onlySpaces = false;
+        break;
+      }
+    }
+    if (onlySpaces)
+    {
+      continue;
+    }
+
     size_t id = 0;
     std::string info;
 
