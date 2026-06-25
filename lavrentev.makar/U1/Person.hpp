@@ -1,8 +1,16 @@
+#ifndef PERSON_HPP
+#define PERSON_HPP
+
 #include <cstddef>
 #include <string>
 
-struct Person
+namespace lavrentev
 {
-  size_t id;
-  std::string info;
-};
+  struct Person
+  {
+    size_t id;
+    std::string info;
+  };
+}
+
+#endif
