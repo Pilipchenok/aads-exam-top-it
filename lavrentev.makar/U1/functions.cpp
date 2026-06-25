@@ -1,5 +1,6 @@
-#include "functions.hpp"
+#include <iostream>
 #include <fstream>
+#include "functions.hpp"
 
 bool lavrentev::exists(size_t id, size_t ids[], size_t size)
 {
@@ -59,7 +60,8 @@ void lavrentev::readData(
   Person** notes,
   size_t** ids,
   size_t& curSize,
-  size_t maxSize)
+  size_t maxSize,
+  size_t& skip)
 {
   std::string line;
   while (std::getline(in, line))
@@ -69,11 +71,13 @@ void lavrentev::readData(
 
     if (!lavrentev::parseLine(line, id, info))
     {
+      ++skip;
       continue;
     }
 
     if (lavrentev::exists(id, *ids, curSize))
     {
+      ++skip;
       continue;
     }
 
@@ -89,7 +93,12 @@ void lavrentev::readData(
   }
 }
 
-void lavrentev::readfile(std::string name, lavrentev::Person** notes, size_t** ids, size_t maxSize)
+void lavrentev::readfile(
+  std::string name,
+  lavrentev::Person** notes,
+  size_t** ids,
+  size_t maxSize,
+  size_t& skip)
 {
   size_t currentSize = 0;
 
@@ -100,11 +109,11 @@ void lavrentev::readfile(std::string name, lavrentev::Person** notes, size_t** i
     {
       throw std::runtime_error("File open error");
     }
-    lavrentev::readData(file, notes, ids, currentSize, maxSize);
+    lavrentev::readData(file, notes, ids, currentSize, maxSize, skip);
   }
   else
   {
-    lavrentev::readData(std::cin, notes, ids, currentSize, maxSize);
+    lavrentev::readData(std::cin, notes, ids, currentSize, maxSize, skip);
   }
 }
 

@@ -14,6 +14,8 @@ int main(int argc, char* argv[])
 
   size_t cap = 10;
   size_t size = 0;
+  size_t skip = 0;
+
   lavrentev::Person* notes = new lavrentev::Person[cap];
   size_t* ids = new size_t[cap];
 
@@ -27,11 +29,11 @@ int main(int argc, char* argv[])
       std::cerr << "File open error\n";
       return 2;
     }
-    lavrentev::readData(fileIn, &notes, &ids, size, cap);
+    lavrentev::readData(fileIn, &notes, &ids, size, cap, skip);
   }
   else
   {
-    lavrentev::readData(std::cin, &notes, &ids, size, cap);
+    lavrentev::readData(std::cin, &notes, &ids, size, cap, skip);
   }
 
   std::ostringstream buf;
@@ -53,6 +55,8 @@ int main(int argc, char* argv[])
   {
     std::cout << buf.str();
   }
+
+  std::cerr << size << ' ' << skip << '\n';
 
   delete[] notes;
   delete[] ids;
